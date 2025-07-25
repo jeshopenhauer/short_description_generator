@@ -1,39 +1,204 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lenguajes de Programación</title>
-  <link rel="stylesheet" href="estilo.css" />
+  <meta charset="UTF-8">
+  <title>Short Description Generator</title>
+  <style>
+    body {
+      background-color: #000;
+      color: #cfcfcf;
+      font-family: monospace;
+      padding: 30px;
+    }
+
+    h2 {
+      color: #7fff7f;
+    }
+
+    .field-group {
+      display: flex;
+      align-items: center;
+      margin: 10px 0;
+    }
+
+    .prompt {
+      color: #7fff7f;
+      margin-right: 5px;
+      min-width: 80px;
+    }
+
+    input {
+      background-color: #000 !important;
+      color: #cfcfcf;
+      border: none;
+      border-bottom: 1px dashed #555;
+      outline: none;
+      padding: 5px;
+      width: 100%;
+      font-family: inherit;
+      font-size: 16px;
+    }
+
+    input:focus {
+      border-bottom: 1px dashed #7fff7f;
+    }
+
+    input::selection {
+      background-color: #333;
+      color: #7fff7f;
+    }
+
+    .paste-button {
+      margin-left: 10px;
+      padding: 4px 10px;
+      font-size: 14px;
+      cursor: pointer;
+      background-color: transparent;
+      color: #7fff7f;
+      border: 1px solid #7fff7f;
+      font-family: inherit;
+    }
+
+    .paste-button:hover {
+      background-color: #7fff7f;
+      color: #000;
+    }
+
+    textarea {
+      background-color: #111;
+      color: #7fff7f;
+      border: 1px solid #7fff7f;
+      padding: 10px;
+      font-family: inherit;
+      font-size: 16px;
+      width: calc(100% - 120px);
+      resize: none;
+      height: 60px;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    textarea:focus {
+      outline: none;
+      border: 1px solid #00ff99;
+    }
+
+    button {
+      background-color: transparent;
+      color: #7fff7f;
+      border: 1px solid #7fff7f;
+      padding: 6px 14px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 15px;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #7fff7f;
+      color: #000;
+    }
+
+    .resultado-container {
+      margin-top: 15px;
+    }
+
+    .resultado-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .copiado-msg {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #7fff7f;
+      display: none;
+    }
+
+    .section {
+      max-width: 700px;
+    }
+  </style>
 </head>
 <body>
 
-  <div class="container">
-    <div class="card pink">
-      <h2>PHP</h2>
-      <p>A web server programming language</p>
-      <a href="#" class="btn">Learn PHP</a>
+  <h2>Short Description Generator</h2>
+
+  <div class="section">
+    <div class="field-group">
+      <span class="prompt">$ Nº OFERTA:</span>
+      <input type="text" id="oferta">
+      <button class="paste-button" onclick="pegar('oferta')">Pegar</button>
+    </div>
+    <div class="field-group">
+      <span class="prompt">$ PIEZA:</span>
+      <input type="text" id="pieza">
+      <button class="paste-button" onclick="pegar('pieza')">Pegar</button>
+    </div>
+    <div class="field-group">
+      <span class="prompt">$ DESCRIPCIÓN:</span>
+      <input type="text" id="descripcion">
+      <button class="paste-button" onclick="pegar('descripcion')">Pegar</button>
+    </div>
+    <div class="field-group">
+      <span class="prompt">$ PROYECTO:</span>
+      <input type="text" id="proyecto">
+      <button class="paste-button" onclick="pegar('proyecto')">Pegar</button>
+    </div>
+    <div class="field-group">
+      <span class="prompt">$ PRECIO UNITARIO:</span>
+      <input type="text" id="precio">
+      <button class="paste-button" onclick="pegar('precio')">Pegar</button>
     </div>
 
-    <div class="card yellow">
-      <h2>jQuery</h2>
-      <p>A JS library for developing web pages</p>
-      <a href="#" class="btn">Learn jQuery</a>
-    </div>
+    <button onclick="generarDescripcion()">Generar Descripción</button>
 
-    <div class="card light">
-      <h2>Java</h2>
-      <p>A programming language</p>
-      <a href="#" class="btn">Learn Java</a>
-    </div>
-
-    <div class="card mint">
-      <h2>C++</h2>
-      <p>A programming language</p>
-      <a href="#" class="btn">Learn C++</a>
+    <div class="resultado-container">
+      <span class="prompt">$ Resultado:</span><br>
+      <div class="resultado-bar">
+        <textarea id="resultado" readonly></textarea>
+        <button onclick="copiarAlPortapapeles()">Copiar</button>
+      </div>
+      <div id="copiado" class="copiado-msg">✅ Copiado al portapapeles</div>
     </div>
   </div>
 
+  <script>
+    function generarDescripcion() {
+      const oferta = document.getElementById("oferta").value.trim();
+      const pieza = document.getElementById("pieza").value.trim();
+      const descripcion = document.getElementById("descripcion").value.trim();
+      const proyecto = document.getElementById("proyecto").value.trim();
+      const precio = document.getElementById("precio").value.trim();
+
+      const resultado = `${oferta}_${pieza}_${descripcion}_${proyecto}_${precio}`;
+      document.getElementById("resultado").value = resultado;
+      document.getElementById("copiado").style.display = "none";
+    }
+
+    function copiarAlPortapapeles() {
+      const texto = document.getElementById("resultado");
+      texto.select();
+      texto.setSelectionRange(0, 99999);
+      document.execCommand("copy");
+
+      const msg = document.getElementById("copiado");
+      msg.style.display = "block";
+      setTimeout(() => {
+        msg.style.display = "none";
+      }, 2000);
+    }
+
+    async function pegar(campoId) {
+      try {
+        const texto = await navigator.clipboard.readText();
+        document.getElementById(campoId).value = texto;
+      } catch (err) {
+        alert("⚠️ No se pudo acceder al portapapeles.");
+      }
+    }
+  </script>
+
 </body>
 </html>
-
